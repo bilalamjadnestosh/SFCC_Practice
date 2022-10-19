@@ -250,7 +250,8 @@ var scrollAnimate = require('../components/scrollAnimate');
 
                     if ($('.data-checkout-stage').data('customer-type') === 'registered') {
                         // if payment method is credit card
-                        if ($('.payment-information').data('payment-method-id') === 'CREDIT_CARD') {
+                        //if ($('.payment-information').data('payment-method-id') === 'CREDIT_CARD' || $('.payment-information').data('payment-method-id') === 'GIFT_PAYMENT' ) {
+                        if ( $(paymentInfoSelector).val() === 'CREDIT_CARD' ) {
                             if (!($('.payment-information').data('is-new-payment'))) {
                                 var cvvCode = $('.saved-payment-instrument.' +
                                     'selected-payment .saved-payment-security-code').val();

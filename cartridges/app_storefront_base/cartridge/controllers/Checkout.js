@@ -121,6 +121,14 @@ server.get(
             }
         );
 
+        var anyGiftProduct = false;
+        for (var i = 0; i < currentBasket.allProductLineItems.length; i++) {
+            if (currentBasket.allProductLineItems[i].gift === true) {
+                anyGiftProduct = true;
+            }
+        }
+        //orderModel.shipping[0].applicableShippingMethods[1] = null;
+
         // Get rid of this from top-level ... should be part of OrderModel???
         var currentYear = new Date().getFullYear();
         var creditCardExpirationYears = [];
@@ -157,6 +165,15 @@ server.get(
             }
         }
 
+        //session.custom.giftgroup = true;
+        var groupGiftCustomers = false;
+
+        for (var i = 0; i < currentCustomer.customerGroups.length; i++) {
+            if (currentCustomer.customerGroups[i] !== null && currentCustomer.customerGroups[i].ID === 'GiftCustomers') {
+                groupGiftCustomers = true;
+            }
+        }
+
         res.render('checkout/checkout', {
             order: orderModel,
             customer: accountModel,
@@ -169,7 +186,9 @@ server.get(
             expirationYears: creditCardExpirationYears,
             currentStage: currentStage,
             reportingURLs: reportingURLs,
-            oAuthReentryEndpoint: 2
+            oAuthReentryEndpoint: 2,
+            isGift: anyGiftProduct,
+            isGroupGiftCustomers: groupGiftCustomers
         });
 
         return next();

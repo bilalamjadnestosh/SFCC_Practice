@@ -1,0 +1,14 @@
+<isscript>
+    var assets = require('*/cartridge/scripts/assets');
+    //assets.addJs('/js/buyGift.js');
+</isscript>
+
+<iscomment> <isset name="buyasgiftval" value="${pdict.buyasgift}" scope="page" /> </iscomment>
+
+<div class="row product-buy-as-gift">
+    <div class="col-sm-12">
+        <b class="buy-as-gift-label" > ${'Buy as Gift: '} </b>
+        <input name="buyasgift" type="checkbox" class="buy-as-gift" value="">
+
+    </div>
+</div>

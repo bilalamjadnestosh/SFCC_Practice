@@ -1,0 +1,15 @@
+<!--- applicable gift payment--->
+<div class="tab-pane gift-payment-content" id="gift-payment-content" role="tabpanel">
+    <fieldset class="payment-form-fields">
+    
+        <div class="stored-payments">
+            <span>${'Gift payment method (no payments needed to place order)'}</span>
+        </div>
+
+        <!--- payment method is gift payment --->
+        <input type="hidden" class="form-control" id="gift-payment-field"
+               name="${pdict.forms.billingForm.paymentMethod.htmlName}"
+               value="GIFT_PAYMENT">
+
+    </fieldset>
+</div>

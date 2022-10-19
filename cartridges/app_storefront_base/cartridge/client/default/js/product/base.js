@@ -653,12 +653,14 @@ module.exports = {
             }
 
             addToCartUrl = getAddToCartUrl();
-
+            
+            var buyGift = jQuery('.buy-as-gift').is(':checked');
             var form = {
                 pid: pid,
                 pidsObj: pidsObj,
                 childProducts: getChildProducts(),
-                quantity: getQuantitySelected($(this))
+                quantity: getQuantitySelected($(this)),
+                isGift: buyGift
             };
 
             if (!$('.bundle-item').length) {

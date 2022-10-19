@@ -1,0 +1,10 @@
+<li class="nav-item" data-method-id="${paymentOption.ID}">
+    <a class="nav-link gift-payment-tab" data-toggle="tab" href="#gift-payment-content" role="tab">
+        <img class="gift-payment-option"
+                src="${URLUtils.staticURL('/images/gift.jpeg')}"
+                height="32"
+                alt="${paymentOption.name}"
+                title="${paymentOption.name}"
+        >
+    </a>
+</li>

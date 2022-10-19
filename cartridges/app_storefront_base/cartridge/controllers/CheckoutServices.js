@@ -295,7 +295,12 @@ server.post(
         }
 
         var paymentMethodIdValue = paymentForm.paymentMethod.value;
-        if (!PaymentManager.getPaymentMethod(paymentMethodIdValue).paymentProcessor) {
+
+        
+        // adding condition for gift order payment method
+        if (paymentMethodIdValue !== "GIFT_PAYMENT") {
+
+            if (!PaymentManager.getPaymentMethod(paymentMethodIdValue).paymentProcessor) {
             throw new Error(Resource.msg(
                 'error.payment.processor.missing',
                 'checkout',
@@ -332,7 +337,19 @@ server.post(
             return next();
         }
 
-        res.setViewData(paymentFormResult.viewData);
+         paymentFormResult = {
+            error : false,
+            viewData
+        };
+
+            res.setViewData(paymentFormResult.viewData);
+        } 
+        else {
+            res.setViewData(viewData);
+        }
+        
+
+        //res.setViewData(paymentFormResult.viewData);
 
         this.on('route:BeforeComplete', function (req, res) { // eslint-disable-line no-shadow
             var BasketMgr = require('dw/order/BasketMgr');
@@ -380,11 +397,15 @@ server.post(
 
             var billingAddress = currentBasket.billingAddress;
             var billingForm = server.forms.getForm('billing');
-            var paymentMethodID = billingData.paymentMethod.value;
+            //var paymentMethodID = billingData.paymentMethod.value;
+            var paymentMethodID = paymentMethodIdValue;
             var result;
 
-            billingForm.creditCardFields.cardNumber.htmlValue = '';
-            billingForm.creditCardFields.securityCode.htmlValue = '';
+            if (paymentMethodID !== "GIFT_PAYMENT") {
+                // billingForm.creditCardFields.cardNumber.htmlValue = '';
+                // billingForm.creditCardFields.securityCode.htmlValue = '';
+            }
+
 
             Transaction.wrap(function () {
                 if (!billingAddress) {
@@ -423,9 +444,11 @@ server.post(
                 return;
             }
 
-            var processor = PaymentMgr.getPaymentMethod(paymentMethodID).getPaymentProcessor();
 
-            // check to make sure there is a payment processor
+            if (paymentMethodID !== "GIFT_PAYMENT") {
+                 var processor = PaymentMgr.getPaymentMethod(paymentMethodID).getPaymentProcessor();
+
+            // // check to make sure there is a payment processor
             if (!processor) {
                 throw new Error(Resource.msg(
                     'error.payment.processor.missing',
@@ -470,7 +493,7 @@ server.post(
                 HookMgr.callHook('app.payment.form.processor.default', 'savePaymentInformation');
             }
 
-            // Calculate the basket
+            // // Calculate the basket
             Transaction.wrap(function () {
                 basketCalculationHelpers.calculateTotals(currentBasket);
             });
@@ -489,6 +512,9 @@ server.post(
                 });
                 return;
             }
+            }
+
+            
 
             var usingMultiShipping = req.session.privacyCache.get('usingMultiShipping');
             if (usingMultiShipping === true && currentBasket.shipments.length < 2) {
@@ -496,7 +522,11 @@ server.post(
                 usingMultiShipping = false;
             }
 
-            hooksHelper('app.customer.subscription', 'subscribeTo', [paymentForm.subscribe.checked, currentBasket.customerEmail], function () {});
+
+            if (paymentMethodID !== "GIFT_PAYMENT") {
+                hooksHelper('app.customer.subscription', 'subscribeTo', [paymentForm.subscribe.checked, currentBasket.customerEmail], function () {});
+            }
+
 
             var currentLocale = Locale.getLocale(req.locale.id);
 
@@ -506,15 +536,19 @@ server.post(
             );
 
             var accountModel = new AccountModel(req.currentCustomer);
-            var renderedStoredPaymentInstrument = COHelpers.getRenderedPaymentInstruments(
+
+            if (paymentMethodID !== "GIFT_PAYMENT") {
+                var renderedStoredPaymentInstrument = COHelpers.getRenderedPaymentInstruments(
                 req,
                 accountModel
             );
+            }
+            
 
             delete billingData.paymentInformation;
 
             res.json({
-                renderedPaymentInstruments: renderedStoredPaymentInstrument,
+                renderedPaymentInstruments: null,
                 customer: accountModel,
                 order: basketModel,
                 form: billingForm,
@@ -624,7 +658,11 @@ server.post('PlaceOrder', server.middleware.https, function (req, res, next) {
         basketCalculationHelpers.calculateTotals(currentBasket);
     });
 
-    // Re-validates existing payment instruments
+
+    var paymentMethodID = currentBasket.allProductLineItems[0].gift ? "GIFT_PAYMENT" : "CREDIT_CARD";
+
+    if (paymentMethodID !== "GIFT_PAYMENT") {
+        // Re-validates existing payment instruments
     var validPayment = COHelpers.validatePayment(req, currentBasket);
     if (validPayment.error) {
         res.json({
@@ -647,6 +685,9 @@ server.post('PlaceOrder', server.middleware.https, function (req, res, next) {
         });
         return next();
     }
+    }
+
+    
 
     // Creates a new order.
     var order = COHelpers.createOrder(currentBasket);
@@ -658,7 +699,10 @@ server.post('PlaceOrder', server.middleware.https, function (req, res, next) {
         return next();
     }
 
-    // Handles payment authorization
+
+    if (paymentMethodID !== "GIFT_PAYMENT") {
+
+        // Handles payment authorization
     var handlePaymentResult = COHelpers.handlePayments(order, order.orderNo);
 
     // Handle custom processing post authorization
@@ -684,7 +728,7 @@ server.post('PlaceOrder', server.middleware.https, function (req, res, next) {
     if (fraudDetectionStatus.status === 'fail') {
         Transaction.wrap(function () { OrderMgr.failOrder(order, true); });
 
-        // fraud detection failed
+    //     // fraud detection failed
         req.session.privacyCache.set('fraudDetectionStatus', true);
 
         res.json({
@@ -696,6 +740,17 @@ server.post('PlaceOrder', server.middleware.https, function (req, res, next) {
 
         return next();
     }
+    }
+
+    else {
+        var fraudDetectionStatus = {
+            status: 'success'
+        };
+    }
+    
+    // set custom attribute false, used for assiging gift customer group at runtime
+    session.custom.giftgroup = false;
+
 
     // Places the order
     var placeOrderResult = COHelpers.placeOrder(order, fraudDetectionStatus);

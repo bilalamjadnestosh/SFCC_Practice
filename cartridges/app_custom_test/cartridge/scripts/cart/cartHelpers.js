@@ -391,6 +391,23 @@ function addProductToCart(currentBasket, productId, quantity, childProducts, opt
         product, productId, productLineItems, childProducts, options);
 
     if (productInCart) {
+
+        // set productLineItem attribute true, when product added to cart as a gift
+        var Site = require('dw/system/Site');
+        var giftSitePref =  Site.current.getCustomPreferenceValue('buyAsGift');
+    
+        if (buyingAsGift === 1 && giftSitePref === true) {
+
+            for (var i = 0; i < productLineItems.length; i++) {
+                if (productLineItems[i].productID === productId) {
+                    productLineItems[i].gift = true;
+                }
+            }
+
+            // set custom attribute true, used for assiging gift customer group at runtime
+            session.custom.giftgroup = true;
+        }
+
         productQuantityInCart = productInCart.quantity.value;
         quantityToSet = quantity ? quantity + productQuantityInCart : productQuantityInCart + 1;
         availableToSell = productInCart.product.availabilityModel.inventoryRecord.ATS.value;
