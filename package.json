@@ -37,8 +37,8 @@
     "watch": "sgmf-scripts --watch",
     "watch:static": "sgmf-scripts --watch static",
     "release": "node bin/Makefile release --",
-    "compile:scss_sfra": "sgmf-scripts --compile css --cartridgeName app_custom_test",
-    "compile:js_sfra": "sgmf-scripts --compile js --cartridgeName app_custom_test",
+    "compile:scss_sfra": "sgmf-scripts --compile css --cartridgeName app_custom_stockemail",
+    "compile:js_sfra": "sgmf-scripts --compile js --cartridgeName app_custom_stockemail",
     "build:sfra": "npm run compile:js_sfra && npm run compile:scss_sfra"
   },
   "repository": {
