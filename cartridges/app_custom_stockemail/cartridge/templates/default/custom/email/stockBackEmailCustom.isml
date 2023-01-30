@@ -1,0 +1,10 @@
+<body>
+    <h2> ${Resource.msg('msg.stockupdate.dear','stock',null)}</h2>
+    <p> ${Resource.msg('msg.stockupdate.message1','stock',null)} </p>
+    <br/>
+
+    <h3>${'Product ID: '} ${pdict.productId}</h3>
+    <a href="${pdict.productUrl}" name="email_product_url" class="email-product-url"> ${'Open product page'} </a>
+
+    <h3>${Resource.msg('msg.stockupdate.thankyou','stock',null)}</h3>
+</body>

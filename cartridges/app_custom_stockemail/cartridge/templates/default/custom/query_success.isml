@@ -1,0 +1,29 @@
+<isdecorate template="common/layout/page">
+    <isscript>
+        var assets = require('*/cartridge/scripts/assets.js');
+        //assets.addCss('/css/cart.css');
+    </isscript>
+
+
+    <div class="container">
+        <h1 class="page-title">${'Stock Query '} ${pdict.status}"</h1>
+        <div class="row cart-header">
+            <div class="col-sm-4 hidden-xs-down">
+                <a class="continue-shopping-link" href="${URLUtils.url('Home-Show')}" title="${'homepage'}">
+                    ${'Go to homepage'}
+                </a>
+            </div>
+           
+        </div>
+          <br/>
+          <div class="form-group required outofstock-success-message">
+               <iscomment> <h2 class="heading-success">
+               <isprint value="${pdict.status}" encoding="htmlcontent" />
+               </h2> </iscomment>
+               <h4 class="heading-message">
+               <isprint value="${pdict.message}" encoding="htmlcontent" />
+               </h4>
+          </div>
+    </div>
+
+</isdecorate>

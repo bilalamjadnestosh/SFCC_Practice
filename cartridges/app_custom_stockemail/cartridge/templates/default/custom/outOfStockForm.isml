@@ -1,0 +1,60 @@
+<form
+    action="${'https://bgfs-004.dx.commercecloud.salesforce.com/on/demandware.store/Sites-Scotts_B-Site/default/Stock-SubmitQuery'}"
+    class="outofstock-query-form"
+    method="POST"
+    name="outofstock_query">
+
+    <input type="hidden" name="${'productId'}" value="${product.id}"/>
+
+    <div class="form-group required">
+        <h4 class="outofstock-form-heading">
+             <isprint value="${'Submit to get stock update!'}" encoding="htmlcontent" />
+        </h4>
+    </div>
+
+    <div class="form-group
+        required">
+        <label class="form-control-label" for="outofstock-form-email">
+             <isprint value="${'Enter your email'}" encoding="htmlcontent" />
+        </label>
+        <input
+            type="email" name="${'email'}"
+            class="form-control outofstock-form-email"
+            id="outofstock-form-email"
+            data-missing-error="${Resource.msg('error.message.required','forms',null)}"
+            data-pattern-mismatch="${Resource.msg('error.message.parse.email.profile.form','forms',null)}"
+            data-range-error="${Resource.msg('error.message.50orless','forms',null)}"
+            aria-describedby="form-email-error" required>
+        <div class="invalid-feedback" id="form-email-error"></div>
+    </div>
+
+    <div class="form-group required">
+        <label class="form-control-label" for="outofstock-form-message">
+            <isprint value="${'Enter your message!'}" encoding="htmlcontent" />
+        </label>
+        <input
+            type="textbox" name="${'message'}"
+            class="form-control outofstock-form-message"
+            id="outofstock-form-message"
+            data-missing-error="${Resource.msg('error.message.required','forms',null)}"
+            data-range-error="${Resource.msg('error.message.50orless','forms',null)}"
+            aria-describedby="form-message-error" required>
+        <div class="invalid-feedback" id="form-message-error"></div>
+    </div>
+
+    <button type="submit" class="btn btn-block btn-primary outofstock-form-submit">
+        ${'Submit Query'}
+    </button>
+    
+</form>
+
+<style>
+    .outofstock-form-heading {
+        text-align: center;
+    }
+
+    .outofstock-query-form {
+        padding: 35px 0;
+    }
+
+</style>
